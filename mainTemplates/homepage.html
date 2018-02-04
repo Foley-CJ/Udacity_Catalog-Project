@@ -2,47 +2,29 @@
 {% block content %}
 {% include "banner.html" %}
 
-
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!--<style>-->
-    <!--@media only screen and (max-width: 500px) {-->
-        <!--body {-->
-            <!--background-color: lightblue;-->
-        <!--}-->
-    <!--}-->
-    <!--</style>-->
+    <title>HomePage</title>
 </head>
+
 <body>
-<div class="container-fluid" style="background-color:purple;height:150px;">
-    <p> hi</p>
+<br>
+<div class="container-fluid" style="">
+    {% for category_set in categories | batch(3, '') %}
+        <div class="row hidden-md-down logoRow" style="height:150px;background-color:white;">
+            {% for category in category_set %}
+                <div class="hidden-md-down col-sm-4 logoCol flexbox" style="background-color:white;">
+                    <div class="logoContainer" style="background-color:white">
+                        <img src="{{ category.picture }}" alt="" height="75px;" width="75px;" style="margin:0px 50px;">
+                        <a href="{{category.id}}">{{ category.name }}</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
 </div>
-
-
-
-
-
-<!--<div class="container" style="background-color:blue;height=200px;margin:10px;">-->
-    <!--<div class="row" style="background-color:green;">-->
-        <!--<div>-->
-            <!--<p>hey</p>-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<p>hey1</p>-->
-    <!--&lt;!&ndash;<img  src="C:\Users\Connor\Desktop\devEnv\Udacity_Catalog-Project\static\img\logo.png">&ndash;&gt;-->
-
-<!--</div>-->
-
-<!--<p> hello world 123 </p>-->
-
-
-
-
 </body>
 </html>
-
 {% endblock %}
+
+
+

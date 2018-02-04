@@ -1,0 +1,21 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "banner.html" %}
+
+<head>
+    <title>HomePage</title>
+</head>
+
+<body>
+<br>
+<div class="container-fluid" style="">
+    {% for food_item in foods %}
+        {{ food_item.name }}
+    {% endfor %}
+</div>
+</body>
+</html>
+{% endblock %}
+
+
+

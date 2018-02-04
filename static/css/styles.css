@@ -1,0 +1,64 @@
+
+/*********************/
+/** Top Banner  **/
+.cont {
+    height: 100%;
+    background: yellow;
+}
+.logoRow {
+    height: 75%;
+    background: rgb(127,127,127);
+}
+
+.logoCol {
+    height: 125px;
+    background: rgb(127,127,127);
+}
+.logoContainer {
+    background-color: rgb(127,127,127);
+    text-align:center;
+}
+.flexbox {
+	display:flex;
+	justify-content:center;
+	flex-flow: column;
+}
+/*********************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+* {
+	font-family: "Helvetica Neue Bold", Roboto, Helvetica, Arial, sans-serif;
+	font-weight: 700;
+	font-size:30px;
+	color:black;
+
+}
+
+
+@media only screen and (max-width: 767px) {
+    body {
+        background-color: lightblue;
+    }
+
+}
+
+
+

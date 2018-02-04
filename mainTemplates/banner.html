@@ -2,20 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Top Banner</title>
 </head>
 <body>
-<!--<div class="row banner main">-->
-    <!--<div class="col-xs-9">-->
-        <!--<h1>Restaurants</h1>-->
-    <!--</div>-->
-    <!--<div class="col-xs-3">-->
-        <!--<img src="/static/img/logo.png"  class="img-fluid">-->
-    <!--</div>-->
-<!--</div>-->
-<div class="container" style="">
-
+<br>
+<div class="container-fluid cont">
+    <div class="row hidden-md-down logoRow">
+        <div class="hidden-md-down col-sm-8 logoCol flexbox">
+            {% if category_name.name %}
+                <div id="test" class="logoContainer">{{ category_name.name }}</div>
+            {% else %}
+                <div id="test" class="logoContainer">World of Food!</div>
+            {% endif %}
+        </div>
+        <div class="d-none d-sm-block col-sm-4 logoCol flexbox">
+            {% if category_name.name %}
+                <img src="{{ category_name.picture }}" width="175px;" height="125px">
+            {% else %}
+                <img src="{{ url_for('static', filename='img/logo.png') }}" width="175px;" height="125px">
+            {% endif %}
+        </div>
+    </div>
 </div>
 
 </body>
+
+
 </html>

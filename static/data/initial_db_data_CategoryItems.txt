@@ -1,0 +1,3 @@
+Burrito,Very Tasty Sammich,https://www.deltaco.com/files/menu/item/machocomboburrito.png,1,1,
+Taco,Delicious Hard meat pie,htpps://www.deltaco.com/files/menu/item/machocomboburrito.png,1,1,
+Spagetti,Noodles and sauce,,2,1,
