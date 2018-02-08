@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, jsonify, url_for, f
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_configure import Base, CategoryItem, Category, User
-
 from flask import session as login_session
 import random
 import string
@@ -28,13 +27,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-@app.route('/hello')
-def hello_world():
-    return render_template('homepage.html')
-
-
-# Show all restaurants
-@app.route('/')
+# Show all food categories
 @app.route('/home/')
 def show_homepage():
     categories = session.query(Category)
@@ -50,9 +43,33 @@ def show_items(category_id):
     return render_template('food_items.html', category_name=name, foods=items)
 
 
-# Login Modules
 
-# Create anti-forgery state token
+@app.route('/category/new/', methods=['GET', 'POST'])
+def newCategory():
+    if 'username' not in login_session:
+        return redirect('/login')
+    if request.method == 'POST':
+        # newCategory ='bob'
+        new_category = Category(name=request.form['name'],
+                                picture=request.form['picture'],
+                                user_id=login_session['user_id'])
+        session.add(new_category)
+        flash('New Restaurant %s Successfully Created' % new_category)
+        session.commit()
+        return redirect(url_for('show_homepage'))
+    else:
+        return render_template('newRestaurant.html', category_name="test")
+
+
+
+
+
+
+
+
+
+
+# Login Modules
 # Create anti-forgery state token
 @app.route('/login')
 def showLogin():
@@ -134,10 +151,23 @@ def gconnect():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
+    # ADD PROVIDER TO LOGIN SESSION
+    login_session['provider'] = 'google'
+
+    # see if user exists, if it doesn't make a new one
+    user_id = getUserID(data["email"])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
+    print 'This is your user_id: ' + str(user_id)
+    print login_session['user_id']
 
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
+    #output += login_session['user_id']
+    output += 'HEY!'
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
@@ -145,6 +175,7 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
+
 
     # DISCONNECT - Revoke a current user's token and reset their login_session
 
@@ -200,9 +231,23 @@ def getUserInfo(user_id):
 def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
+        print 'user'
+        print 'user'
+        print 'user'
+        print user
+        print user.id
+        print 'user'
+        print 'user'
+        print 'user'
+
         return user.id
     except:
         return None
+
+
+
+
+
 
 
 
