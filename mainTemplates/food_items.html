@@ -11,10 +11,15 @@
 <div class="container-fluid" style="">
     {% for food_item in foods %}
         {{ food_item.name }}
+    <a href = '{{url_for('editCategoryItem', category_id=category_id, categoryItem_id=food_item.id) }}'> edit </a>
+    <a href = '{{url_for('deleteCategoryItem', category_id=category_id, categoryItem_id=food_item.id) }}'> delete </a>
+        <br>
     {% endfor %}
 </div>
+
+<br>
+<span>Click <a href="{{url_for('new_food_item',category_id=category_id)}}">Here</a> to add a new item.</span>
 </body>
-</html>
 {% endblock %}
 
 

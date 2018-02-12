@@ -28,45 +28,115 @@ session = DBSession()
 
 
 # Show all food categories
-@app.route('/home/')
+@app.route('/')
 def show_homepage():
     categories = session.query(Category)
     print categories
     return render_template('homepage.html', categories=categories, category_name="test")
 
 
-@app.route('/home/<int:category_id>/')
+# show foods for a specific category
+@app.route('/<int:category_id>/')
 def show_items(category_id):
     items = session.query(CategoryItem).filter_by(category_id=category_id)
     name = session.query(Category).filter_by(id=category_id).one()
+
     print name
-    return render_template('food_items.html', category_name=name, foods=items)
+    return render_template('food_items.html', category_name=name, foods=items,category_id=category_id)
 
 
-
-@app.route('/category/new/', methods=['GET', 'POST'])
-def newCategory():
+# add a new category
+@app.route('/new/', methods=['GET', 'POST'])
+def new_category():
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
-        # newCategory ='bob'
-        new_category = Category(name=request.form['name'],
-                                picture=request.form['picture'],
-                                user_id=login_session['user_id'])
-        session.add(new_category)
-        flash('New Restaurant %s Successfully Created' % new_category)
+        new_category_item = Category(name=request.form['name'],
+                                     picture=request.form['picture'],
+                                     user_id=login_session['user_id'])
+        session.add(new_category_item)
+        flash('New Restaurant %s Successfully Created' % new_category_item)
         session.commit()
         return redirect(url_for('show_homepage'))
     else:
-        return render_template('newRestaurant.html', category_name="test")
+        return render_template('newCategory.html', category_name="test")
 
 
+#######################################
+# category item management
+#######################################
+
+# add a new category item
+@app.route('/<int:category_id>/new/', methods=['GET', 'POST'])
+def new_food_item(category_id):
+    if 'username' not in login_session:
+        return redirect('/login')
+    name = session.query(Category).filter_by(id=category_id).one()
+    # if login_session['user_id'] != category_id.user_id:
+    #     return "<script>function myFunction() " \
+    #            "{alert('You are not authorized to add menu items to this restaurant. " \
+    #            "Please create your own restaurant in order to add items.');}" \
+    #            "</script><body onload='myFunction()'>"
+    if request.method == 'POST':
+            new_category_item = CategoryItem(name=request.form['name'],
+                                             description=request.form['description'],
+                                             picture=request.form['picture'],
+                                             category_id=category_id,
+                                             user_id=login_session['user_id'])
+            session.add(new_category_item)
+            session.commit()
+            flash('New Menu %s Item Successfully Created'.format(new_category_item.name))
+            return redirect(url_for('show_items', category_id=category_id))
+    else:
+        return render_template('newCategoryItem.html', category_name=name)
 
 
+# add a edit category item
+@app.route('/<int:category_id>/edit/<int:categoryItem_id>', methods=['GET', 'POST'])
+def editCategoryItem(category_id, categoryItem_id):
+    if 'username' not in login_session:
+        return redirect('/login')
+
+    categoryItem = session.query(CategoryItem).filter_by(id=categoryItem_id).one()
+    category = session.query(Category).filter_by(id=category_id).one()
+
+    if request.method == 'POST':
+        if request.form['name']:
+            categoryItem.name = request.form['name']
+        if request.form['description']:
+            categoryItem.description = request.form['description']
+        if request.form['picture']:
+            categoryItem.price = request.form['picture']
+        session.add(categoryItem)
+        session.commit()
+        flash('Menu Item Successfully Edited')
+        return redirect(url_for('show_items', category_id=category_id))
+    else:
+        return render_template('editCategoryItem.html',
+                               category_id=category_id,
+                               menu_id=categoryItem_id,
+                               item=categoryItem,
+                               category_name=category)
 
 
+# Delete a menu item
+@app.route('/<int:category_id>/delete/<int:categoryItem_id>', methods=['GET', 'POST'])
+def deleteCategoryItem(category_id, categoryItem_id):
+    if 'username' not in login_session:
+        return redirect('/login')
 
+    categoryItem = session.query(CategoryItem).filter_by(id=categoryItem_id).one()
+    category = session.query(Category).filter_by(id=category_id).one()
 
+    if request.method == 'POST':
+        session.delete(categoryItem)
+        session.commit()
+        flash('Menu Item Successfully Deleted')
+        return redirect(url_for('show_items', category_id=category_id))
+    else:
+        return render_template('deleteCategoryItem.html',
+                               item=categoryItem,
+                               category_name=category)
 
 
 # Login Modules
@@ -80,6 +150,39 @@ def showLogin():
     return render_template('login.html', STATE=state)
 
 
+# User Handling
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+        'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        print 'user'
+        print 'user'
+        print 'user'
+        print user
+        print user.id
+        print 'user'
+        print 'user'
+        print 'user'
+
+        return user.id
+    except:
+        return None
+
+
+# Google Login Handling
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -177,9 +280,6 @@ def gconnect():
     return output
 
 
-    # DISCONNECT - Revoke a current user's token and reset their login_session
-
-
 @app.route('/gdisconnect')
 def gdisconnect():
     # Only disconnect a connected user.
@@ -192,58 +292,57 @@ def gdisconnect():
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-
     if result['status'] == '200':
-        # Reset the user's sesson.
-        del login_session['access_token']
-        del login_session['gplus_id']
-        del login_session['username']
-        del login_session['email']
-        del login_session['picture']
-
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        # For whatever reason, the given token was invalid.
-        response = make_response(
-            json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
-# User Helper Functions
+
+@app.route('/disconnect')
+def disconnect():
+    if 'provider' in login_session:
+        if login_session['provider'] == 'google':
+            gdisconnect()
+            del login_session['gplus_id']
+            del login_session['access_token']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['user_id']
+        del login_session['provider']
+        flash("You have successfully been logged out.")
+        return redirect(url_for('show_homepage'))
+    else:
+        flash("You were not logged in")
+        return redirect(url_for('show_homepage'))
 
 
-def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session[
-        'email'], picture=login_session['picture'])
-    session.add(newUser)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
-    return user.id
+#######################################
+# Json Handling
+#######################################
+
+# JSON APIs to view Restaurant Information
+@app.route('/<int:category_id>/JSON')
+def categoryItemsJSON(category_id):
+    items = session.query(CategoryItem).filter_by(id=category_id).all()
+    return jsonify(All_Category_Items=[i.serialize for i in items])
 
 
-def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
-    return user
+@app.route('/<int:category_id>/<int:category_item_id>/JSON')
+def itemJSON(category_id, category_item_id):
+    category_item = session.query(CategoryItem).filter_by(id=category_item_id).one()
+    return jsonify(Category_Item=category_item.serialize)
 
 
-def getUserID(email):
-    try:
-        user = session.query(User).filter_by(email=email).one()
-        print 'user'
-        print 'user'
-        print 'user'
-        print user
-        print user.id
-        print 'user'
-        print 'user'
-        print 'user'
-
-        return user.id
-    except:
-        return None
-
+@app.route('/JSON')
+@app.route('/category/JSON')
+def categoriesJSON():
+    categories = session.query(Category).all()
+    return jsonify(categories=[r.serialize for r in categories])
 
 
 

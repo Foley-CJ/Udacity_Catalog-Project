@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
 </head>
 <body>
+
+<div class="col-md-6 text-right">
+    {%if 'username' not in session %}
+    <a href="{{url_for('showLogin')}}">Click Here to Login </a>
+    {% else %}
+    <a href="{{url_for('disconnect')}}">Logout </a>
+    {% endif %}
+
+</div>
+
+
 <br>
 <div class="container-fluid cont">
     <div class="row hidden-md-down logoRow">

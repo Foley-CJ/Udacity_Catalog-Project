@@ -7,8 +7,7 @@
 </head>
 
 <body>
-<br>
-<a href="{{url_for('showLogin')}}">Click Here to Log in </a>
+
 <br>
 <div class="container-fluid" style="">
     {% for category_set in categories | batch(3, '') %}
@@ -24,6 +23,9 @@
         </div>
     {% endfor %}
 </div>
+
+<span>Click <a href="{{url_for('new_category')}}">Here</a> to add a new category.</span>
+
 </body>
 </html>
 {% endblock %}
