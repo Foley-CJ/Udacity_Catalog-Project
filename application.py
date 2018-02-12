@@ -42,7 +42,7 @@ def show_items(category_id):
     name = session.query(Category).filter_by(id=category_id).one()
 
     print name
-    return render_template('food_items.html', category_name=name, foods=items,category_id=category_id)
+    return render_template('food_items.html', category_name=name, foods=items, category_id=category_id)
 
 
 # add a new category
@@ -168,17 +168,8 @@ def getUserInfo(user_id):
 def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
-        print 'user'
-        print 'user'
-        print 'user'
-        print user
-        print user.id
-        print 'user'
-        print 'user'
-        print 'user'
-
         return user.id
-    except:
+    except "error":
         return None
 
 
@@ -274,7 +265,8 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;' \
+              '-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
