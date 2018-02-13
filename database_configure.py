@@ -22,7 +22,7 @@ class Category(Base):
     name = Column(String(250), nullable=False)
     picture = Column(String(250))
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    user = relationship(User, "all, delete-orphan")
 
     @property
     def serialize(self):
@@ -43,7 +43,7 @@ class CategoryItem(Base):
     category_id = Column(Integer, ForeignKey('category.id'))
     user_id = Column(Integer, ForeignKey('user.id'))
     category = relationship(Category)
-    user = relationship(User)
+    user = relationship(User, "all, delete-orphan")
 
     @property
     def serialize(self):
