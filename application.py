@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from flask import Flask, render_template, \
+    request, redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
@@ -16,7 +17,7 @@ import requests
 app = Flask(__name__, template_folder="mainTemplates")
 
 CLIENT_ID = json.loads(open('client'
-                    '_secrets.json', 'r').read())['web']['client_id']
+                            '_secrets.json', 'r').read())['web']['client_id']
 
 APPLICATION_NAME = "Restaurant Menu Application"
 
@@ -83,18 +84,19 @@ def new_food_item(category_id):
         return "<script>function myFunction() {alert('You are not " \
                "authorized to add menu items to this restaurant. " \
                "Please create your own restaurant " \
-               "in order to add items.');}</script><body onload='myFunction()'>"
+               "in order to add items.');}</script>" \
+               "<body onload='myFunction()'>"
 
     if request.method == 'POST':
-            new_category_item = CategoryItem(name=request.form['name'],
-                                     description=request.form['description'],
-                                     picture=request.form['picture'],
-                                     category_id=category_id,
-                                     user_id=login_session['user_id'])
-            session.add(new_category_item)
+            nItem = CategoryItem(name=request.form['name'],
+                                 description=request.form['description'],
+                                 picture=request.form['picture'],
+                                 category_id=category_id,
+                                 user_id=login_session['user_id'])
+            session.add(nItem)
             session.commit()
             flash('New Menu %s Item '
-                  'Successfully Created'.format(new_category_item.name))
+                  'Successfully Created'.format(nItem.name))
             return redirect(url_for('show_items', category_id=category_id))
     else:
         return render_template('newCategoryItem.html', category_name=name)
@@ -113,7 +115,8 @@ def editCategoryItem(category_id, categoryItem_id):
         return "<script>function myFunction() {alert('You are not " \
                "authorized to add menu items to this restaurant. " \
                "Please create your own restaurant " \
-               "in order to add items.');}</script><body onload='myFunction()'>"
+               "in order to add items.');}</script>" \
+               "<body onload='myFunction()'>"
 
     if request.method == 'POST':
         if request.form['name']:
@@ -147,7 +150,8 @@ def deleteCategoryItem(category_id, categoryItem_id):
         return "<script>function myFunction() {alert('You are not " \
                "authorized to add menu items to this restaurant. " \
                "Please create your own restaurant " \
-               "in order to add items.');}</script><body onload='myFunction()'>"
+               "in order to add items.');}" \
+               "</script><body onload='myFunction()'>"
 
     if request.method == 'POST':
         session.delete(citem)
@@ -282,7 +286,6 @@ def gconnect():
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
-    #output += login_session['user_id']
     output += 'HEY!'
     output += '!</h1>'
     output += '<img src="'
