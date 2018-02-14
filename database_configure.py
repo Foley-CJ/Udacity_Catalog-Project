@@ -22,7 +22,8 @@ class Category(Base):
     name = Column(String(250), nullable=False)
     picture = Column(String(250))
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User, "all, delete-orphan")
+    user = relationship(User)
+    category_item=relationship('CategoryItem',cascade='all, delete-orphan')
 
     @property
     def serialize(self):
@@ -43,7 +44,7 @@ class CategoryItem(Base):
     category_id = Column(Integer, ForeignKey('category.id'))
     user_id = Column(Integer, ForeignKey('user.id'))
     category = relationship(Category)
-    user = relationship(User, "all, delete-orphan")
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -52,6 +53,7 @@ class CategoryItem(Base):
             'name': self.name,
             'description': self.description,
         }
+
 
 
 engine = create_engine('sqlite:///food_world.db')

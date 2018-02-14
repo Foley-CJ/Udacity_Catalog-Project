@@ -1,5 +1,10 @@
-from flask import Flask, render_template, \
-    request, redirect, jsonify, url_for, flash
+from flask import (Flask,
+                   render_template,
+                   request,
+                   redirect,
+                   jsonify,
+                   url_for,
+                   flash)
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
@@ -160,7 +165,7 @@ def deleteCategoryItem(category_id, categoryItem_id):
         return redirect(url_for('show_items', category_id=category_id))
     else:
         return render_template('deleteCategoryItem.html',
-                               item=categoryItem,
+                               item=categoryItem_id,
                                category_name=category)
 
 
@@ -286,7 +291,6 @@ def gconnect():
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
-    output += 'HEY!'
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
