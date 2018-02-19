@@ -18,4 +18,6 @@ This application is built using python 2.7 and relies upon the flask framework. 
 * flask - 0.12.xx
 * jinja2 - 2.10.xx
 * sqlAlchemy - 1.12.xx
-    
+
+In order to run the application navigate to the root folder and run the whole application using the follwoing command.
+"python application.py"
