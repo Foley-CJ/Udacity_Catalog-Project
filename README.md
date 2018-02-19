@@ -10,3 +10,12 @@ About the project:
 * Database can be configured using database_configure.py
 * Database can be loaded with inital data by running datanase_data_load.py
   * database_data_load.py uses the files within static/data folder to load the sqlite base with default data.
+
+
+This application is built using python 2.7 and relies upon the flask framework. Specific packages are shown below.
+
+* python - 2.7.xx
+* flask - 0.12.xx
+* jinja2 - 2.10.xx
+* sqlAlchemy - 1.12.xx
+    

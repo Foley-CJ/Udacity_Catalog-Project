@@ -85,12 +85,12 @@ def new_food_item(category_id):
     if 'username' not in login_session:
         return redirect('/login')
     name = session.query(Category).filter_by(id=category_id).one()
-    if login_session['user_id'] != name.user_id:
-        return "<script>function myFunction() {alert('You are not " \
-               "authorized to add menu items to this restaurant. " \
-               "Please create your own restaurant " \
-               "in order to add items.');}</script>" \
-               "<body onload='myFunction()'>"
+    # if login_session['user_id'] != name.user_id:
+    #     return "<script>function myFunction() {alert('You are not " \
+    #            "authorized to add items to this category. " \
+    #            "Please create your own restaurant " \
+    #            "in order to add items.');}</script>" \
+    #            "<body onload='myFunction()'>"
 
     if request.method == 'POST':
             nItem = CategoryItem(name=request.form['name'],
@@ -116,11 +116,11 @@ def editCategoryItem(category_id, categoryItem_id):
 
     citem = session.query(CategoryItem).filter_by(id=categoryItem_id).one()
     category = session.query(Category).filter_by(id=category_id).one()
-    if login_session['user_id'] != category.user_id:
+    if login_session['user_id'] != CategoryItem.user_id:
         return "<script>function myFunction() {alert('You are not " \
-               "authorized to add menu items to this restaurant. " \
-               "Please create your own restaurant " \
-               "in order to add items.');}</script>" \
+               "authorized to edit menu items to this category. " \
+               "Please create your own category " \
+               "in order to edit items.');}</script>" \
                "<body onload='myFunction()'>"
 
     if request.method == 'POST':
@@ -151,11 +151,11 @@ def deleteCategoryItem(category_id, categoryItem_id):
 
     citem = session.query(CategoryItem).filter_by(id=categoryItem_id).one()
     category = session.query(Category).filter_by(id=category_id).one()
-    if login_session['user_id'] != category.user_id:
+    if login_session['user_id'] != CategoryItem.user_id:
         return "<script>function myFunction() {alert('You are not " \
-               "authorized to add menu items to this restaurant. " \
-               "Please create your own restaurant " \
-               "in order to add items.');}" \
+               "authorized to delete items to this category. " \
+               "Please create your own category or item " \
+               "in order to delete items.');}" \
                "</script><body onload='myFunction()'>"
 
     if request.method == 'POST':
